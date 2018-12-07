@@ -86,14 +86,14 @@
 <meta property="og:site_name" content="probably">
 <meta property="og:description" content="1.什么是HashMap 众所周知，HashMap是一个用于存储Key-Value键值对的集合，每一个键值对也叫做Entry。这些个键值对（Entry）分散存储在一个数组当中，这个数组就是HashMap的主干。HashMap数组每一个元素的初始值都是Null。  2.HashMap的两个重要方法：put()和get()put()方法及其原理 我们都知道，put()方法是向HashMap中添加一个数">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://yoursite.com/2018/12/07/images/hashmap_1.png">
-<meta property="og:image" content="http://yoursite.com/2018/12/07/images/hashmap_2.png">
-<meta property="og:image" content="http://yoursite.com/2018/12/07/images/hashmap_3.png">
-<meta property="og:updated_time" content="2018-12-07T10:53:24.000Z">
+<meta property="og:image" content="https://github.com/13621167443/13621167443.github.io/blob/master/images/hashmap_1.png?raw=true">
+<meta property="og:image" content="https://github.com/13621167443/13621167443.github.io/blob/master/images/hashmap_2.png?raw=true">
+<meta property="og:image" content="https://github.com/13621167443/13621167443.github.io/blob/master/images/hashmap_3.png?raw=true">
+<meta property="og:updated_time" content="2018-12-07T10:55:33.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="HashMap原理初探">
 <meta name="twitter:description" content="1.什么是HashMap 众所周知，HashMap是一个用于存储Key-Value键值对的集合，每一个键值对也叫做Entry。这些个键值对（Entry）分散存储在一个数组当中，这个数组就是HashMap的主干。HashMap数组每一个元素的初始值都是Null。  2.HashMap的两个重要方法：put()和get()put()方法及其原理 我们都知道，put()方法是向HashMap中添加一个数">
-<meta name="twitter:image" content="http://yoursite.com/2018/12/07/images/hashmap_1.png">
+<meta name="twitter:image" content="https://github.com/13621167443/13621167443.github.io/blob/master/images/hashmap_1.png?raw=true">
 
 
 
@@ -310,9 +310,9 @@
 <p>我们都知道，put()方法是向HashMap中添加一个数据。既然数组是HashMap的主干，那肯定是要有对应的索引(下面会直接用 index 来代替).<br>比如我现在有这样一个HashMap:<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">HashMap&lt;String, Integer&gt; hashMap = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br></pre></td></tr></table></figure></p>
 </blockquote>
 <p>我要往里面插入一条数据<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hashMap.put(<span class="string">"book"</span>, <span class="number">0</span>)；</span><br></pre></td></tr></table></figure></p>
-<p>我们就需要一个哈希函数来确定index。<br>index = hash(“book”);<br>说到这里就不得不说一下这个 hash()方法了。在这里计算index，是通过与运算的方式来做的<br>Index = HashCode(Key) &amp; (Length - 1)   //这里的length指的是 HashMap的长度,关于长度的问题，我们在后面会说到<br>那么问题来了，既然是与运算，那么肯定存在结果一样即发生哈希碰撞的情况。要是我们得到的index是一样的呢？<br><img src="../images/hashmap_1.png" alt=""><br>其实是这样的：<br>HashMap数组的每一个元素不止是一个Entry对象，也是一个链表的头节点。每一个Entry对象通过Next指针指向它的下一个Entry节点。当<br>新来的Entry映射到冲突的数组位置时，只需要插入到对应的链表即可。<br><img src="../images/hashmap_2.png" alt=""></p>
+<p>我们就需要一个哈希函数来确定index。<br>index = hash(“book”);<br>说到这里就不得不说一下这个 hash()方法了。在这里计算index，是通过与运算的方式来做的<br>Index = HashCode(Key) &amp; (Length - 1)   //这里的length指的是 HashMap的长度,关于长度的问题，我们在后面会说到<br>那么问题来了，既然是与运算，那么肯定存在结果一样即发生哈希碰撞的情况。要是我们得到的index是一样的呢？<br><img src="https://github.com/13621167443/13621167443.github.io/blob/master/images/hashmap_1.png?raw=true" alt=""><br>其实是这样的：<br>HashMap数组的每一个元素不止是一个Entry对象，也是一个链表的头节点。每一个Entry对象通过Next指针指向它的下一个Entry节点。当<br>新来的Entry映射到冲突的数组位置时，只需要插入到对应的链表即可。<br><img src="https://github.com/13621167443/13621167443.github.io/blob/master/images/hashmap_2.png?raw=true" alt=""></p>
 <h3 id="get-方法"><a href="#get-方法" class="headerlink" title="get()方法"></a>get()方法</h3><blockquote>
-<p>使用Get方法根据Key来查找Value的时候，发生了什么呢？<br>首先会把输入的Key做一次Hash映射，得到对应的index：<br>index =  Hash（“apple”）<br>由于刚才所说的Hash冲突，同一个位置有可能匹配到多个Entry，这时候就需要顺着对应链表的头节点，一个一个向下来查找。假设我们要查找的Key是“apple”：<br><img src="../images/hashmap_3.png" alt=""><br>第一步，我们查看的是头节点Entry6，Entry6的Key是banana，显然不是我们要找的结果。<br>第二步，我们查看的是Next节点Entry1，Entry1的Key是apple，正是我们要找的结果。</p>
+<p>使用Get方法根据Key来查找Value的时候，发生了什么呢？<br>首先会把输入的Key做一次Hash映射，得到对应的index：<br>index =  Hash（“apple”）<br>由于刚才所说的Hash冲突，同一个位置有可能匹配到多个Entry，这时候就需要顺着对应链表的头节点，一个一个向下来查找。假设我们要查找的Key是“apple”：<br><img src="https://github.com/13621167443/13621167443.github.io/blob/master/images/hashmap_3.png?raw=true" alt=""><br>第一步，我们查看的是头节点Entry6，Entry6的Key是banana，显然不是我们要找的结果。<br>第二步，我们查看的是Next节点Entry1，Entry1的Key是apple，正是我们要找的结果。</p>
 </blockquote>
 <h2 id="3-HashMap的两个重要参数：容量-Capacity-和负载因子-Load-factor"><a href="#3-HashMap的两个重要参数：容量-Capacity-和负载因子-Load-factor" class="headerlink" title="3.HashMap的两个重要参数：容量(Capacity)和负载因子(Load factor)"></a>3.HashMap的两个重要参数：容量(Capacity)和负载因子(Load factor)</h2><h3 id="容量-Capacity"><a href="#容量-Capacity" class="headerlink" title="容量(Capacity)"></a>容量(Capacity)</h3><blockquote>
 <p>这个容量就相当于是HashMap的长度了。默认值是16，为什么默认值是16呢？前面我们说到过，计算index的时候，是通过key的哈希值与length -1进行与运算得到的。15的二进制是 1111，那么我们通过与运算得到的值，就可以说完全取决于key的 hashcode的最后几位。这也就符合哈希算法均匀分布的原则。<br>那如果长度不是16，是别的呢？假如说是 9  二进制就是 1001<br>那么如果几个key的hashcode的后四位分别对应为 1111  1011 1101 1101<br>虽然四个值对应的 hashcode值的后四位不一样，但是他们跟 1001做完与运算之后买的都的值就都是 1001.那么他们拿到的index就都是一样的，这样的话，与index对应的链表的长度就变长了。我们知道，get()的时候，如果index是一样的，就会去链表中查询。而链表的特点就是增删快、查询慢，所以性能方面就会降低很多。因此我们要尽量避免哈希碰撞。所以长度值尽量设置为2的幂次方（为什么是2的幂次方呢？因为2的幂次方 - 1的二进制就都是1）</p>
